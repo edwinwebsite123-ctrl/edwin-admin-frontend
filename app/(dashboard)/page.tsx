@@ -64,7 +64,7 @@ export default function HomeDashboardPage() {
           </div>
         </div>
         <div className="rounded-xl border border-black/5 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4">
-          <h2 className="font-semibold mb-4">Upcoming Placements</h2>
+          <h2 className="font-semibold mb-4">Placements</h2>
           <ul className="space-y-3 text-sm">
             <li className="flex items-center justify-between">
               <span>Frontend Developer - NovaTech</span>
@@ -85,7 +85,7 @@ export default function HomeDashboardPage() {
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="rounded-xl border border-black/5 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Popular Courses</h2>
+            <h2 className="font-semibold">Courses</h2>
             <button className="text-sm text-indigo-600 hover:text-indigo-700">Manage</button>
           </div>
           <ul className="space-y-3 text-sm">
@@ -105,7 +105,7 @@ export default function HomeDashboardPage() {
         </div>
         <div className="xl:col-span-2 rounded-xl border border-black/5 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Featured Teachers</h2>
+            <h2 className="font-semibold">Teachers</h2>
             <button className="text-sm text-indigo-600 hover:text-indigo-700">View all</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
