@@ -1,14 +1,62 @@
+"use client";
+
+import { useState } from "react";
+
 export default function PlacementsPage() {
+  const placements = [
+    {
+      student: "Ava Carter",
+      role: "Frontend Developer",
+      company: "NovaTech",
+      date: "Sep 20, 2025",
+      status: "Placed",
+    },
+    {
+      student: "Liam Patel",
+      role: "Data Analyst",
+      company: "InsightWorks",
+      date: "Sep 24, 2025",
+      status: "Placed",
+    },
+    {
+      student: "Mia Chen",
+      role: "Backend Engineer",
+      company: "Cloudify",
+      date: "Sep 28, 2025",
+      status: "Placed",
+    },
+  ];
+
+  const [search, setSearch] = useState("");
+
+  const filteredPlacements = placements.filter(
+    (row) =>
+      row.student.toLowerCase().includes(search.toLowerCase()) ||
+      row.role.toLowerCase().includes(search.toLowerCase()) ||
+      row.company.toLowerCase().includes(search.toLowerCase()) ||
+      row.date.toLowerCase().includes(search.toLowerCase()) ||
+      row.status.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">Placements</h1>
-        <button className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-          </svg>
-          New Placement
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search placements..."
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
+            New Placement
+          </button>
+        </div>
       </div>
 
       <div className="rounded-xl border border-black/5 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4">
@@ -16,6 +64,7 @@ export default function PlacementsPage() {
           <table className="min-w-full text-sm">
             <thead>
               <tr className="text-left text-gray-500">
+                <th className="py-2 pr-4">Student</th>
                 <th className="py-2 pr-4">Role</th>
                 <th className="py-2 pr-4">Company</th>
                 <th className="py-2 pr-4">Date</th>
@@ -23,18 +72,24 @@ export default function PlacementsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {[
-                {r: "Frontend Developer", c: "NovaTech", d: "Sep 20", s: "Scheduled"},
-                {r: "Data Analyst", c: "InsightWorks", d: "Sep 24", s: "Scheduled"},
-                {r: "Backend Engineer", c: "Cloudify", d: "Sep 28", s: "Scheduled"},
-              ].map((row, idx) => (
+              {filteredPlacements.map((row, idx) => (
                 <tr key={idx}>
-                  <td className="py-2 pr-4">{row.r}</td>
-                  <td className="py-2 pr-4">{row.c}</td>
-                  <td className="py-2 pr-4">{row.d}</td>
-                  <td className="py-2"><span className="px-2 py-1 rounded-full bg-indigo-50 text-indigo-700">{row.s}</span></td>
+                  <td className="py-2 pr-4">{row.student}</td>
+                  <td className="py-2 pr-4">{row.role}</td>
+                  <td className="py-2 pr-4">{row.company}</td>
+                  <td className="py-2 pr-4">{row.date}</td>
+                  <td className="py-2">
+                    <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">{row.status}</span>
+                  </td>
                 </tr>
               ))}
+              {filteredPlacements.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-gray-400">
+                    No placements found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -42,5 +97,3 @@ export default function PlacementsPage() {
     </div>
   );
 }
-
-

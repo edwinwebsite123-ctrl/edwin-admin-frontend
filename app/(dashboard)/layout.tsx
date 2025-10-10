@@ -9,31 +9,48 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "Home", icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9.75l8.485-6.364a1 1 0 011.03 0L21 9.75V20a1 1 0 01-1 1h-5a1 1 0 01-1-1v-5H10v5a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z" />
-      </svg>
-    ) },
-    { href: "/courses", label: "Courses", icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5.25A2.25 2.25 0 015.25 3h8.5A2.25 2.25 0 0116 5.25V19.5a.75.75 0 01-1.16.628L10 17.25l-4.84 2.878A.75.75 0 014 19.5V5.25z" />
-      </svg>
-    ) },
-    { href: "/blogs", label: "Blogs", icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.5 6.75h-9A2.25 2.25 0 008.25 9v9A2.25 2.25 0 0010.5 20.25h9A2.25 2.25 0 0021.75 18V9A2.25 2.25 0 0019.5 6.75zM6.75 17.25H5.25A2.25 2.25 0 013 15V6A2.25 2.25 0 015.25 3.75H15" />
-      </svg>
-    ) },
-    { href: "/teachers", label: "Teachers", icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
-      </svg>
-    ) },
-    { href: "/placements", label: "Placements", icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.25 7.5A2.25 2.25 0 014.5 5.25h15a2.25 2.25 0 012.25 2.25v1.5H2.25V7.5zM2.25 12h19.5v4.5A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5V12z" />
-      </svg>
-    ) },
+    {
+      href: "/", label: "Home", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9.75l8.485-6.364a1 1 0 011.03 0L21 9.75V20a1 1 0 01-1 1h-5a1 1 0 01-1-1v-5H10v5a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z" />
+        </svg>
+      )
+    },
+    {
+      href: "/admission-leads", label: "Admission Leads", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+      )
+    },
+    {
+      href: "/courses", label: "Courses", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5.25A2.25 2.25 0 015.25 3h8.5A2.25 2.25 0 0116 5.25V19.5a.75.75 0 01-1.16.628L10 17.25l-4.84 2.878A.75.75 0 014 19.5V5.25z" />
+        </svg>
+      )
+    },
+    {
+      href: "/blogs", label: "Blogs", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.5 6.75h-9A2.25 2.25 0 008.25 9v9A2.25 2.25 0 0010.5 20.25h9A2.25 2.25 0 0021.75 18V9A2.25 2.25 0 0019.5 6.75zM6.75 17.25H5.25A2.25 2.25 0 013 15V6A2.25 2.25 0 015.25 3.75H15" />
+        </svg>
+      )
+    },
+    {
+      href: "/teachers", label: "Teachers", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
+        </svg>
+      )
+    },
+    {
+      href: "/placements", label: "Placements", icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.25 7.5A2.25 2.25 0 014.5 5.25h15a2.25 2.25 0 012.25 2.25v1.5H2.25V7.5zM2.25 12h19.5v4.5A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5V12z" />
+        </svg>
+      )
+    },
   ];
 
   const linkClass = (href: string) => {
