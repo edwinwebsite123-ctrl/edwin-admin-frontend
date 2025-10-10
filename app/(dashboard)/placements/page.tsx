@@ -10,6 +10,7 @@ export default function PlacementsPage() {
       company: "NovaTech",
       date: "Sep 20, 2025",
       status: "Placed",
+      photo: "", // No photo to show skeleton avatar
     },
     {
       student: "Liam Patel",
@@ -17,6 +18,7 @@ export default function PlacementsPage() {
       company: "InsightWorks",
       date: "Sep 24, 2025",
       status: "Placed",
+      photo: "/file.svg",
     },
     {
       student: "Mia Chen",
@@ -24,6 +26,7 @@ export default function PlacementsPage() {
       company: "Cloudify",
       date: "Sep 28, 2025",
       status: "Placed",
+      photo: "", // No photo to show skeleton avatar
     },
   ];
 
@@ -64,6 +67,7 @@ export default function PlacementsPage() {
           <table className="min-w-full text-sm">
             <thead>
               <tr className="text-left text-gray-500">
+                <th className="py-2 pr-4">Photo</th>
                 <th className="py-2 pr-4">Student</th>
                 <th className="py-2 pr-4">Role</th>
                 <th className="py-2 pr-4">Company</th>
@@ -74,6 +78,32 @@ export default function PlacementsPage() {
             <tbody className="divide-y divide-gray-100">
               {filteredPlacements.map((row, idx) => (
                 <tr key={idx}>
+                  <td className="py-2 pr-4">
+                    {row.photo ? (
+                      <img
+                        src={row.photo}
+                        alt={row.student}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-5 h-5 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </td>
                   <td className="py-2 pr-4">{row.student}</td>
                   <td className="py-2 pr-4">{row.role}</td>
                   <td className="py-2 pr-4">{row.company}</td>
@@ -85,7 +115,7 @@ export default function PlacementsPage() {
               ))}
               {filteredPlacements.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-gray-400">
+                  <td colSpan={6} className="py-6 text-center text-gray-400">
                     No placements found.
                   </td>
                 </tr>
