@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, PropsWithChildren } from "react";
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navItems = [
     {
@@ -23,41 +25,78 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         </svg>
       )
     },
-    {
-      href: "/courses", label: "Courses", icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5.25A2.25 2.25 0 015.25 3h8.5A2.25 2.25 0 0116 5.25V19.5a.75.75 0 01-1.16.628L10 17.25l-4.84 2.878A.75.75 0 014 19.5V5.25z" />
-        </svg>
-      )
-    },
-    {
-      href: "/blogs", label: "Blogs", icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.5 6.75h-9A2.25 2.25 0 008.25 9v9A2.25 2.25 0 0010.5 20.25h9A2.25 2.25 0 0021.75 18V9A2.25 2.25 0 0019.5 6.75zM6.75 17.25H5.25A2.25 2.25 0 013 15V6A2.25 2.25 0 015.25 3.75H15" />
-        </svg>
-      )
-    },
-    {
-      href: "/teachers", label: "Teachers", icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
-        </svg>
-      )
-    },
-    {
-      href: "/placements", label: "Placements", icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.25 7.5A2.25 2.25 0 014.5 5.25h15a2.25 2.25 0 012.25 2.25v1.5H2.25V7.5zM2.25 12h19.5v4.5A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5V12z" />
-        </svg>
-      )
-    },
+    // {
+    //   href: "/courses", label: "Courses", icon: (
+    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5.25A2.25 2.25 0 015.25 3h8.5A2.25 2.25 0 0116 5.25V19.5a.75.75 0 01-1.16.628L10 17.25l-4.84 2.878A.75.75 0 014 19.5V5.25z" />
+    //     </svg>
+    //   )
+    // },
+    // {
+    //   href: "/blogs", label: "Blogs", icon: (
+    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.5 6.75h-9A2.25 2.25 0 008.25 9v9A2.25 2.25 0 0010.5 20.25h9A2.25 2.25 0 0021.75 18V9A2.25 2.25 0 0019.5 6.75zM6.75 17.25H5.25A2.25 2.25 0 013 15V6A2.25 2.25 0 015.25 3.75H15" />
+    //     </svg>
+    //   )
+    // },
+    // {
+    //   href: "/teachers", label: "Teachers", icon: (
+    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
+    //     </svg>
+    //   )
+    // },
+    // {
+    //   href: "/placements", label: "Placements", icon: (
+    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.25 7.5A2.25 2.25 0 014.5 5.25h15a2.25 2.25 0 012.25 2.25v1.5H2.25V7.5zM2.25 12h19.5v4.5A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5V12z" />
+    //     </svg>
+    //   )
+    // },
   ];
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/logout/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${localStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        // Clear local storage
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData");
+        
+        // Redirect to login page
+        router.push("/login");
+      } else {
+        // If logout fails on server, still clear local storage and redirect
+        console.error("Logout failed on server, clearing local storage anyway");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData");
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Even if there's an error, clear local storage and redirect
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      router.push("/login");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const linkClass = (href: string) => {
     const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
     return (
       (isActive ? "bg-indigo-50 text-indigo-700 font-medium " : "text-gray-700 hover:bg-gray-50 ") +
-      "flex items-center gap-3 px-3 py-2 rounded-lg"
+      "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
     );
   };
 
@@ -77,13 +116,27 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
             </Link>
           ))}
         </nav>
+        
+        {/* Logout button in sidebar for desktop */}
+        <div className="absolute bottom-4 left-3 right-3">
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
+            </svg>
+            {isLoggingOut ? "Logging out..." : "Logout"}
+          </button>
+        </div>
       </aside>
 
       {/* Header */}
       <header className="h-16 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-black/5 flex items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <button
-            className="lg:hidden inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white h-10 w-10 hover:bg-gray-50"
+            className="lg:hidden inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white h-10 w-10 hover:bg-gray-50 transition-colors"
             aria-label={isMobileSidebarOpen ? "Close sidebar" : "Open sidebar"}
             aria-expanded={isMobileSidebarOpen}
             aria-controls="mobile-sidebar"
@@ -100,18 +153,24 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
           <h1 className="text-lg font-semibold">Overview</h1>
         </div>
         <div className="flex items-center gap-3">
-          <a href="/profile" className="inline-flex" aria-label="Open profile">
+          <a href="#" className="inline-flex" aria-label="Open profile">
             <div className="h-8 w-8 rounded-full bg-gray-200 grid place-items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
               </svg>
             </div>
           </a>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
+          
+          {/* Logout button in header for mobile */}
+          <button 
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="lg:hidden inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
             </svg>
-            Logout
+            {isLoggingOut ? "..." : "Logout"}
           </button>
         </div>
       </header>
@@ -141,6 +200,18 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Logout button in mobile sidebar */}
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
+              </svg>
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </button>
           </nav>
         </aside>
       </div>
@@ -152,5 +223,3 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     </div>
   );
 }
-
-
