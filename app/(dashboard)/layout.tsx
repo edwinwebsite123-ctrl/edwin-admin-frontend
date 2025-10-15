@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, PropsWithChildren } from "react";
+import { useState, PropsWithChildren, useEffect } from "react";
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navItems = [
     {
@@ -25,35 +26,45 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         </svg>
       )
     },
-    // {
-    //   href: "/courses", label: "Courses", icon: (
-    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5.25A2.25 2.25 0 015.25 3h8.5A2.25 2.25 0 0116 5.25V19.5a.75.75 0 01-1.16.628L10 17.25l-4.84 2.878A.75.75 0 014 19.5V5.25z" />
-    //     </svg>
-    //   )
-    // },
-    // {
-    //   href: "/blogs", label: "Blogs", icon: (
-    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.5 6.75h-9A2.25 2.25 0 008.25 9v9A2.25 2.25 0 0010.5 20.25h9A2.25 2.25 0 0021.75 18V9A2.25 2.25 0 0019.5 6.75zM6.75 17.25H5.25A2.25 2.25 0 013 15V6A2.25 2.25 0 015.25 3.75H15" />
-    //     </svg>
-    //   )
-    // },
-    // {
-    //   href: "/teachers", label: "Teachers", icon: (
-    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0V20H4.5v-.5z" />
-    //     </svg>
-    //   )
-    // },
-    // {
-    //   href: "/placements", label: "Placements", icon: (
-    //     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.25 7.5A2.25 2.25 0 014.5 5.25h15a2.25 2.25 0 012.25 2.25v1.5H2.25V7.5zM2.25 12h19.5v4.5A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5V12z" />
-    //     </svg>
-    //   )
-    // },
   ];
+
+  // Verify token on component mount and periodically
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = localStorage.getItem("authToken");
+      
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/verify-token/`, {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          // Token is invalid, redirect to login
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userData");
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        // On network error, we'll keep the user logged in but log the error
+      }
+    };
+
+    verifyToken();
+
+    // Verify token every 5 minutes
+    const interval = setInterval(verifyToken, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [router]);
 
   const handleLogout = async () => {
     try {
@@ -89,7 +100,16 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
       router.push("/login");
     } finally {
       setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
     }
+  };
+
+  const openLogoutConfirm = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const closeLogoutConfirm = () => {
+    setShowLogoutConfirm(false);
   };
 
   const linkClass = (href: string) => {
@@ -120,14 +140,13 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         {/* Logout button in sidebar for desktop */}
         <div className="absolute bottom-4 left-3 right-3">
           <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={openLogoutConfirm}
+            className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
             </svg>
-            {isLoggingOut ? "Logging out..." : "Logout"}
+            Logout
           </button>
         </div>
       </aside>
@@ -163,14 +182,13 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
           
           {/* Logout button in header for mobile */}
           <button 
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="lg:hidden inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={openLogoutConfirm}
+            className="lg:hidden inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
             </svg>
-            {isLoggingOut ? "..." : "Logout"}
+            Logout
           </button>
         </div>
       </header>
@@ -203,14 +221,13 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
             
             {/* Logout button in mobile sidebar */}
             <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+              onClick={openLogoutConfirm}
+              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors mt-4"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
               </svg>
-              {isLoggingOut ? "Logging out..." : "Logout"}
+              Logout
             </button>
           </nav>
         </aside>
@@ -220,6 +237,51 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
       <main className="p-4 sm:p-6 space-y-6">
         {children}
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Confirm Logout</h3>
+              </div>
+              <p className="text-gray-600">
+                Are you sure you want to logout? You will need to login again to access the dashboard.
+              </p>
+            </div>
+            
+            <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+              <button
+                onClick={closeLogoutConfirm}
+                disabled={isLoggingOut}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isLoggingOut ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Logging out...
+                  </>
+                ) : (
+                  "Logout"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
