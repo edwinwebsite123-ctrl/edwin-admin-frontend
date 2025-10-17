@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, PropsWithChildren, useEffect } from "react";
 
@@ -13,14 +14,18 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
 
   const navItems = [
     {
-      href: "/", label: "Home", icon: (
+      href: "/",
+      label: "Home",
+      icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9.75l8.485-6.364a1 1 0 011.03 0L21 9.75V20a1 1 0 01-1 1h-5a1 1 0 01-1-1v-5H10v5a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z" />
         </svg>
       )
     },
     {
-      href: "/admission-leads", label: "Admission Leads", icon: (
+      href: "/admission-leads",
+      label: "Admission Leads",
+      icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
         </svg>
@@ -28,16 +33,14 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     },
   ];
 
-  // Verify token on component mount and periodically
+  // Token verification effect
   useEffect(() => {
     const verifyToken = async () => {
       const token = localStorage.getItem("authToken");
-      
       if (!token) {
         router.push("/login");
         return;
       }
-
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/verify-token/`, {
           method: "GET",
@@ -45,31 +48,24 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
             Authorization: `Token ${token}`,
           },
         });
-
         if (!response.ok) {
-          // Token is invalid, redirect to login
           localStorage.removeItem("authToken");
           localStorage.removeItem("userData");
           router.push("/login");
         }
       } catch (error) {
         console.error("Token verification failed:", error);
-        // On network error, we'll keep the user logged in but log the error
       }
     };
 
     verifyToken();
-
-    // Verify token every 5 minutes
     const interval = setInterval(verifyToken, 5 * 60 * 1000);
-
     return () => clearInterval(interval);
   }, [router]);
 
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/logout/`, {
         method: "POST",
         headers: {
@@ -78,23 +74,16 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         },
       });
 
-      if (response.ok) {
-        // Clear local storage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        
-        // Redirect to login page
-        router.push("/login");
-      } else {
-        // If logout fails on server, still clear local storage and redirect
-        console.error("Logout failed on server, clearing local storage anyway");
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        router.push("/login");
+      if (!response.ok) {
+        console.error("Logout failed on server");
       }
+
+
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      router.push("/login");
     } catch (error) {
       console.error("Error during logout:", error);
-      // Even if there's an error, clear local storage and redirect
       localStorage.removeItem("authToken");
       localStorage.removeItem("userData");
       router.push("/login");
@@ -104,13 +93,8 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     }
   };
 
-  const openLogoutConfirm = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const closeLogoutConfirm = () => {
-    setShowLogoutConfirm(false);
-  };
+  const openLogoutConfirm = () => setShowLogoutConfirm(true);
+  const closeLogoutConfirm = () => setShowLogoutConfirm(false);
 
   const linkClass = (href: string) => {
     const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -125,7 +109,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
       {/* Desktop Sidebar */}
       <aside className="row-span-2 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-r border-black/5 hidden lg:block">
         <div className="h-16 flex items-center gap-3 px-5 border-b border-black/5">
-          <img src="/file.svg" alt="Company logo" className="h-8 w-8" />
+          <Image src="/file.svg" alt="Company logo" width={32} height={32} />
           <span className="font-semibold tracking-wide">Dashboard</span>
         </div>
         <nav className="p-3 space-y-1">
@@ -136,8 +120,6 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
             </Link>
           ))}
         </nav>
-        
-        {/* Logout button in sidebar for desktop */}
         <div className="absolute bottom-4 left-3 right-3">
           <button
             onClick={openLogoutConfirm}
@@ -179,9 +161,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
               </svg>
             </div>
           </a>
-          
-          {/* Logout button in header for mobile */}
-          <button 
+          <button
             onClick={openLogoutConfirm}
             className="lg:hidden inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
@@ -193,7 +173,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         </div>
       </header>
 
-      {/* Mobile sidebar drawer */}
+      {/* Mobile Sidebar */}
       <div
         id="mobile-sidebar"
         role="dialog"
@@ -208,7 +188,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
           className={`absolute left-0 top-0 h-full w-[85%] max-w-[280px] bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-r border-black/5 transform transition-transform duration-300 ease-out ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
           <div className="h-16 flex items-center gap-3 px-5 border-b border-black/5">
-            <img src="/file.svg" alt="Company logo" className="h-8 w-8" />
+            <Image src="/file.svg" alt="Company logo" width={32} height={32} />
             <span className="font-semibold tracking-wide">Dashboard</span>
           </div>
           <nav className="p-3 space-y-1">
@@ -218,8 +198,6 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
                 {item.label}
               </Link>
             ))}
-            
-            {/* Logout button in mobile sidebar */}
             <button
               onClick={openLogoutConfirm}
               className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors mt-4"
@@ -233,7 +211,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         </aside>
       </div>
 
-      {/* Page content */}
+      {/* Page Content */}
       <main className="p-4 sm:p-6 space-y-6">
         {children}
       </main>
@@ -255,7 +233,6 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
                 Are you sure you want to logout? You will need to login again to access the dashboard.
               </p>
             </div>
-            
             <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
               <button
                 onClick={closeLogoutConfirm}

@@ -5,7 +5,7 @@ export default function ForgotPassword() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <h1 className="text-2xl font-bold mb-2 text-gray-900">Forgot Password</h1>
-        <p className="mb-6 text-gray-600">Enter your email and we'll send you a reset link.</p>
+        <p className="mb-6 text-gray-600">Enter your email and we&apos;ll send you a reset link.</p>
         <form className="space-y-5">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">

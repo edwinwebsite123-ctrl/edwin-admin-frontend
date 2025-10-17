@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function PlacementsPage() {
   const placements = [
@@ -18,7 +19,7 @@ export default function PlacementsPage() {
       company: "InsightWorks",
       date: "Sep 24, 2025",
       status: "Placed",
-      photo: "/file.svg",
+      photo: "/file.svg", // Make sure this exists in /public
     },
     {
       student: "Mia Chen",
@@ -54,8 +55,19 @@ export default function PlacementsPage() {
             className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <button className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             New Placement
           </button>
@@ -80,9 +92,11 @@ export default function PlacementsPage() {
                 <tr key={idx}>
                   <td className="py-2 pr-4">
                     {row.photo ? (
-                      <img
+                      <Image
                         src={row.photo}
                         alt={row.student}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
@@ -109,7 +123,9 @@ export default function PlacementsPage() {
                   <td className="py-2 pr-4">{row.company}</td>
                   <td className="py-2 pr-4">{row.date}</td>
                   <td className="py-2">
-                    <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">{row.status}</span>
+                    <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">
+                      {row.status}
+                    </span>
                   </td>
                 </tr>
               ))}

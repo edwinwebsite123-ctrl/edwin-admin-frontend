@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -20,16 +21,13 @@ export default function Login() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Save token to localStorage
         localStorage.setItem("authToken", data.token);
         router.push("/");
       } else {
@@ -50,7 +48,13 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-500 opacity-90" />
         <div className="relative z-10 max-w-md text-white">
           <div className="flex items-center gap-3 mb-6">
-            <img src="/file.svg" alt="Company logo" className="h-10 w-10 rounded-lg bg-white/10 p-2" />
+            <Image
+              src="/file.svg"
+              alt="Company logo"
+              width={40}
+              height={40}
+              className="rounded-lg bg-white/10 p-2"
+            />
             <span className="text-xl font-semibold tracking-wide">Admin Portal</span>
           </div>
           <h2 className="text-4xl font-bold leading-tight">Secure access to your dashboard</h2>
@@ -64,7 +68,7 @@ export default function Login() {
       <div className="flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden text-center">
-            <img src="/file.svg" alt="Company logo" className="mx-auto mb-4 h-12 w-12" />
+            <Image src="/file.svg" alt="Company logo" width={48} height={48} className="mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-gray-900">Admin Portal</h1>
             <p className="text-gray-500">Sign in to continue</p>
           </div>
