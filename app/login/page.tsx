@@ -128,7 +128,7 @@ export default function Login() {
           </div>
 
           <p className="mt-6 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} Admin Portal. Restricted access only.
+            © {new Date().getFullYear()} Admin Portal. Restricted access only..
           </p>
         </div>
       </div>
