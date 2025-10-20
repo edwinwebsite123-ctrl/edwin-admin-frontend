@@ -49,7 +49,7 @@ export default function Login() {
         <div className="relative z-10 max-w-md text-white">
           <div className="flex items-center gap-3 mb-6">
             <Image
-              src="/file.svg"
+              src="/logo/hero-icon.png"
               alt="Company logo"
               width={40}
               height={40}
