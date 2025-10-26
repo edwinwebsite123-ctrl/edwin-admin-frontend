@@ -3,65 +3,52 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-interface Course {
-  id: string;
-  title: string;
-  short_description: string;
-  category: string;
+interface UGProgram {
+  id: number;
+  code: string;
+  name: string;
+  subtitle: string;
+  description: string;
   duration: string;
-  level: string;
-  mode: string;
-  certification: string;
+  specializations: string[];
+  eligibility: string;
+  students: string;
+  modules: number;
+  rating: string;
   image: string;
-  overview: string;
-  modules: string[];
-  career_opportunities: string[];
-  tools: string[];
-  highlights: string[];
   created_at: string;
   updated_at: string;
 }
 
-export default function CoursesPage() {
-  const router = useRouter();
-  const [courses, setCourses] = useState<Course[]>([]);
+export default function UGProgramsPage() {
+  const [ugPrograms, setUgPrograms] = useState<UGProgram[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const fetchCourses = async () => {
+  useEffect(() => {
+    fetchUGPrograms();
+  }, []);
+
+  const fetchUGPrograms = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/`, {
-        headers: {
-          Authorization: `Token ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ug-programs/`);
       if (response.ok) {
         const data = await response.json();
-        setCourses(data);
-      } else if (response.status === 401) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        router.push("/login");
+        setUgPrograms(data);
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching UG programs:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this UG program?")) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/${id}/delete/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ug-programs/${id}/delete/`, {
         method: "DELETE",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,
@@ -69,21 +56,21 @@ export default function CoursesPage() {
       });
 
       if (response.ok) {
-        setCourses(courses.filter(course => course.id !== id));
+        setUgPrograms(ugPrograms.filter(program => program.id !== id));
       } else {
-        alert("Failed to delete course");
+        alert("Failed to delete UG program");
       }
     } catch (error) {
-      console.error("Error deleting course:", error);
-      alert("Error deleting course");
+      console.error("Error deleting UG program:", error);
+      alert("Error deleting UG program");
     }
   };
 
-  const filteredCourses = courses.filter(
-    (c) =>
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.short_description.toLowerCase().includes(search.toLowerCase()) ||
-      c.category.toLowerCase().includes(search.toLowerCase())
+  const filteredUGPrograms = ugPrograms.filter(
+    (program) =>
+      program.name.toLowerCase().includes(search.toLowerCase()) ||
+      program.code.toLowerCase().includes(search.toLowerCase()) ||
+      program.subtitle.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) {
@@ -97,17 +84,17 @@ export default function CoursesPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Courses</h1>
+        <h1 className="text-lg font-semibold">UG Programs</h1>
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search courses..."
+            placeholder="Search UG programs..."
             className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <Link
-            href="/courses/add"
+            href="/ug-programs/add"
             className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
           >
             <svg
@@ -124,7 +111,7 @@ export default function CoursesPage() {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Add Course
+            Add UG Program
           </Link>
         </div>
       </div>
@@ -134,23 +121,23 @@ export default function CoursesPage() {
           <thead>
             <tr className="bg-gray-50">
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Image</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Title</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Code</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Name</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Duration</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Level</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Rating</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
+            {filteredUGPrograms.length > 0 ? (
+              filteredUGPrograms.map((program) => (
+                <tr key={program.id} className="hover:bg-gray-50">
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
-                      {course.image ? (
+                      {program.image ? (
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${course.image}`}
-                          alt={course.title}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${program.image}`}
+                          alt={program.name}
                           width={48}
                           height={48}
                           className="object-cover"
@@ -158,20 +145,22 @@ export default function CoursesPage() {
                       ) : (
                         <div className="h-full w-full bg-gray-200 flex items-center justify-center">
                           <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
                           </svg>
                         </div>
                       )}
                     </div>
                   </td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{course.title}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.category}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.duration}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.level}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{program.code}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{program.name}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{program.duration}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{program.rating} ⭐</td>
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/courses/${course.id}`}
+                        href={`/ug-programs/${program.id}`}
                         className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +170,7 @@ export default function CoursesPage() {
                         View
                       </Link>
                       <Link
-                        href={`/courses/${course.id}/edit`}
+                        href={`/ug-programs/${program.id}/edit`}
                         className="inline-flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1.5 text-xs font-medium text-yellow-700 hover:bg-yellow-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +179,7 @@ export default function CoursesPage() {
                         Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(course.id)}
+                        onClick={() => handleDelete(program.id)}
                         className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +194,7 @@ export default function CoursesPage() {
             ) : (
               <tr>
                 <td colSpan={6} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
-                  No courses found.
+                  No UG programs found.
                 </td>
               </tr>
             )}

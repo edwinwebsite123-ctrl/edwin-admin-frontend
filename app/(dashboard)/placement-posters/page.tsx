@@ -3,65 +3,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-interface Course {
-  id: string;
-  title: string;
-  short_description: string;
-  category: string;
-  duration: string;
-  level: string;
-  mode: string;
-  certification: string;
+interface PlacementPoster {
+  id: number;
   image: string;
-  overview: string;
-  modules: string[];
-  career_opportunities: string[];
-  tools: string[];
-  highlights: string[];
+  alt: string;
   created_at: string;
   updated_at: string;
 }
 
-export default function CoursesPage() {
-  const router = useRouter();
-  const [courses, setCourses] = useState<Course[]>([]);
+export default function PlacementPostersPage() {
+  const [placementPosters, setPlacementPosters] = useState<PlacementPoster[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const fetchCourses = async () => {
+  useEffect(() => {
+    fetchPlacementPosters();
+  }, []);
+
+  const fetchPlacementPosters = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/`, {
-        headers: {
-          Authorization: `Token ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/placement-posters/`);
       if (response.ok) {
         const data = await response.json();
-        setCourses(data);
-      } else if (response.status === 401) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        router.push("/login");
+        setPlacementPosters(data);
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching placement posters:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this placement poster?")) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/${id}/delete/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/placement-posters/delete/${id}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,
@@ -69,21 +47,19 @@ export default function CoursesPage() {
       });
 
       if (response.ok) {
-        setCourses(courses.filter(course => course.id !== id));
+        setPlacementPosters(placementPosters.filter(poster => poster.id !== id));
       } else {
-        alert("Failed to delete course");
+        alert("Failed to delete placement poster");
       }
     } catch (error) {
-      console.error("Error deleting course:", error);
-      alert("Error deleting course");
+      console.error("Error deleting placement poster:", error);
+      alert("Error deleting placement poster");
     }
   };
 
-  const filteredCourses = courses.filter(
-    (c) =>
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.short_description.toLowerCase().includes(search.toLowerCase()) ||
-      c.category.toLowerCase().includes(search.toLowerCase())
+  const filteredPlacementPosters = placementPosters.filter(
+    (poster) =>
+      poster.alt.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) {
@@ -97,17 +73,17 @@ export default function CoursesPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Courses</h1>
+        <h1 className="text-lg font-semibold">Placement Posters</h1>
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search courses..."
+            placeholder="Search placement posters..."
             className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <Link
-            href="/courses/add"
+            href="/placement-posters/add"
             className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
           >
             <svg
@@ -124,7 +100,7 @@ export default function CoursesPage() {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Add Course
+            Add Placement Poster
           </Link>
         </div>
       </div>
@@ -134,23 +110,21 @@ export default function CoursesPage() {
           <thead>
             <tr className="bg-gray-50">
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Image</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Title</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Duration</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Level</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Alt Text</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Created</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
+            {filteredPlacementPosters.length > 0 ? (
+              filteredPlacementPosters.map((poster) => (
+                <tr key={poster.id} className="hover:bg-gray-50">
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
-                      {course.image ? (
+                      {poster.image ? (
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${course.image}`}
-                          alt={course.title}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${poster.image}`}
+                          alt={poster.alt}
                           width={48}
                           height={48}
                           className="object-cover"
@@ -164,14 +138,12 @@ export default function CoursesPage() {
                       )}
                     </div>
                   </td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{course.title}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.category}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.duration}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.level}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{poster.alt}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{new Date(poster.created_at).toLocaleDateString()}</td>
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/courses/${course.id}`}
+                        href={`/placement-posters/${poster.id}`}
                         className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +153,7 @@ export default function CoursesPage() {
                         View
                       </Link>
                       <Link
-                        href={`/courses/${course.id}/edit`}
+                        href={`/placement-posters/${poster.id}/edit`}
                         className="inline-flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1.5 text-xs font-medium text-yellow-700 hover:bg-yellow-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +162,7 @@ export default function CoursesPage() {
                         Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(course.id)}
+                        onClick={() => handleDelete(poster.id)}
                         className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,8 +176,8 @@ export default function CoursesPage() {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
-                  No courses found.
+                <td colSpan={4} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
+                  No placement posters found.
                 </td>
               </tr>
             )}

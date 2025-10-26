@@ -3,65 +3,45 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-interface Course {
-  id: string;
-  title: string;
-  short_description: string;
-  category: string;
-  duration: string;
-  level: string;
-  mode: string;
-  certification: string;
+interface Testimonial {
+  id: number;
+  text: string;
+  name: string;
+  role: string;
   image: string;
-  overview: string;
-  modules: string[];
-  career_opportunities: string[];
-  tools: string[];
-  highlights: string[];
   created_at: string;
   updated_at: string;
 }
 
-export default function CoursesPage() {
-  const router = useRouter();
-  const [courses, setCourses] = useState<Course[]>([]);
+export default function TestimonialsPage() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const fetchCourses = async () => {
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/`, {
-        headers: {
-          Authorization: `Token ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/testimonials/`);
       if (response.ok) {
         const data = await response.json();
-        setCourses(data);
-      } else if (response.status === 401) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        router.push("/login");
+        setTestimonials(data);
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching testimonials:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this testimonial?")) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/${id}/delete/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/testimonials/${id}/delete/`, {
         method: "DELETE",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,
@@ -69,21 +49,21 @@ export default function CoursesPage() {
       });
 
       if (response.ok) {
-        setCourses(courses.filter(course => course.id !== id));
+        setTestimonials(testimonials.filter(testimonial => testimonial.id !== id));
       } else {
-        alert("Failed to delete course");
+        alert("Failed to delete testimonial");
       }
     } catch (error) {
-      console.error("Error deleting course:", error);
-      alert("Error deleting course");
+      console.error("Error deleting testimonial:", error);
+      alert("Error deleting testimonial");
     }
   };
 
-  const filteredCourses = courses.filter(
-    (c) =>
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.short_description.toLowerCase().includes(search.toLowerCase()) ||
-      c.category.toLowerCase().includes(search.toLowerCase())
+  const filteredTestimonials = testimonials.filter(
+    (t) =>
+      t.name.toLowerCase().includes(search.toLowerCase()) ||
+      t.role.toLowerCase().includes(search.toLowerCase()) ||
+      t.text.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) {
@@ -97,17 +77,17 @@ export default function CoursesPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Courses</h1>
+        <h1 className="text-lg font-semibold">Testimonials</h1>
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search courses..."
+            placeholder="Search testimonials..."
             className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <Link
-            href="/courses/add"
+            href="/testimonials/add"
             className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
           >
             <svg
@@ -124,7 +104,7 @@ export default function CoursesPage() {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Add Course
+            Add Testimonial
           </Link>
         </div>
       </div>
@@ -134,44 +114,42 @@ export default function CoursesPage() {
           <thead>
             <tr className="bg-gray-50">
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Image</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Title</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Duration</th>
-              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Level</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Role</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Testimonial</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
+            {filteredTestimonials.length > 0 ? (
+              filteredTestimonials.map((testimonial) => (
+                <tr key={testimonial.id} className="hover:bg-gray-50">
                   <td className="border border-gray-200 px-4 py-3">
-                    <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
-                      {course.image ? (
+                    <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100">
+                      {testimonial.image ? (
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${course.image}`}
-                          alt={course.title}
-                          width={48}
-                          height={48}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${testimonial.image}`}
+                          alt={testimonial.name}
+                          width={40}
+                          height={40}
                           className="object-cover"
                         />
                       ) : (
                         <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-                          <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
                       )}
                     </div>
                   </td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{course.title}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.category}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.duration}</td>
-                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.level}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900">{testimonial.name}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{testimonial.role}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500 max-w-xs truncate">{testimonial.text}</td>
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/courses/${course.id}`}
+                        href={`/testimonials/${testimonial.id}`}
                         className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +159,7 @@ export default function CoursesPage() {
                         View
                       </Link>
                       <Link
-                        href={`/courses/${course.id}/edit`}
+                        href={`/testimonials/${testimonial.id}/edit`}
                         className="inline-flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1.5 text-xs font-medium text-yellow-700 hover:bg-yellow-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +168,7 @@ export default function CoursesPage() {
                         Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(course.id)}
+                        onClick={() => handleDelete(testimonial.id)}
                         className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
                       >
                         <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,8 +182,8 @@ export default function CoursesPage() {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
-                  No courses found.
+                <td colSpan={5} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
+                  No testimonials found.
                 </td>
               </tr>
             )}
