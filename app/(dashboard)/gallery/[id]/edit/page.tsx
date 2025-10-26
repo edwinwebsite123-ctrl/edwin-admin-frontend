@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface GalleryItem {
   id: number;
@@ -28,13 +28,7 @@ export default function EditGalleryItemPage() {
     image: null as File | null,
   });
 
-  useEffect(() => {
-    if (params.id) {
-      fetchGalleryItem();
-    }
-  }, [params.id]);
-
-  const fetchGalleryItem = async () => {
+  const fetchGalleryItem = useCallback(async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gallery/${params.id}/`);
       if (response.ok) {
@@ -54,7 +48,13 @@ export default function EditGalleryItemPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    if (params.id) {
+      fetchGalleryItem();
+    }
+  }, [params.id, fetchGalleryItem]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

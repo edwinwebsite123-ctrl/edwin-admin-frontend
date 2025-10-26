@@ -75,9 +75,9 @@ export default function FacultyPage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-lg font-semibold">Faculty</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <input
             type="text"
             value={search}
@@ -87,7 +87,7 @@ export default function FacultyPage() {
           />
           <Link
             href="/faculty/add"
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700 whitespace-nowrap"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

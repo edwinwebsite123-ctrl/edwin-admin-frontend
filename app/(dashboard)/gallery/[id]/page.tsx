@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface GalleryItem {
   id: number;
@@ -21,13 +21,7 @@ export default function ViewGalleryItemPage() {
   const [galleryItem, setGalleryItem] = useState<GalleryItem | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (params.id) {
-      fetchGalleryItem();
-    }
-  }, [params.id]);
-
-  const fetchGalleryItem = async () => {
+  const fetchGalleryItem = useCallback(async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gallery/${params.id}/`);
       if (response.ok) {
@@ -41,7 +35,13 @@ export default function ViewGalleryItemPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    if (params.id) {
+      fetchGalleryItem();
+    }
+  }, [params.id, fetchGalleryItem]);
 
   if (loading) {
     return (
