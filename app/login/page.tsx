@@ -29,6 +29,7 @@ export default function Login() {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userData", JSON.stringify(data.user));
         router.push("/");
       } else {
         setErrorMessage(data.detail || "Login failed. Please try again.");
