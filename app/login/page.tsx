@@ -97,12 +97,12 @@ export default function Login() {
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     Password
                   </label>
-                  <Link
+                  {/* <Link
                     href="/forgot-password"
                     className="text-sm text-indigo-600 hover:text-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1"
                   >
                     Forgot?
-                  </Link>
+                  </Link> */}
                 </div>
                 <input
                   id="password"
