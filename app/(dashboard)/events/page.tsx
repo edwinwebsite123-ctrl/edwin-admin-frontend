@@ -73,29 +73,9 @@ export default function EventsPage() {
       <div className="min-h-[calc(100vh-64px)] space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h1 className="text-lg font-semibold">Event</h1>
-          <Link
-            href="/events/edit"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700 whitespace-nowrap"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Create Event
-          </Link>
         </div>
         <div className="bg-white rounded-lg p-8 text-center">
-          <p className="text-gray-500">No active event found.</p>
+          <p className="text-gray-500">No event found.</p>
         </div>
       </div>
     );
