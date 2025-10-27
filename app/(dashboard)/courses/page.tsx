@@ -20,6 +20,7 @@ interface Course {
   career_opportunities: string[];
   tools: string[];
   highlights: string[];
+  top_choice: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -79,11 +80,32 @@ export default function CoursesPage() {
     }
   };
 
+  const handleToggleTopChoice = async (id: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/courses/${id}/toggle-top-choice/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${localStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        const updatedCourse = await response.json();
+        setCourses(courses.map(course => course.id === id ? updatedCourse : course));
+      } else {
+        alert("Failed to toggle top choice");
+      }
+    } catch (error) {
+      console.error("Error toggling top choice:", error);
+      alert("Error toggling top choice");
+    }
+  };
+
   const filteredCourses = courses.filter(
     (c) =>
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.short_description.toLowerCase().includes(search.toLowerCase()) ||
-      c.category.toLowerCase().includes(search.toLowerCase())
+      (c.title?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (c.short_description?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (c.category?.toLowerCase() || '').includes(search.toLowerCase())
   );
 
   if (loading) {
@@ -139,6 +161,7 @@ export default function CoursesPage() {
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Duration</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Level</th>
+              <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Top Choice</th>
               <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
@@ -169,8 +192,22 @@ export default function CoursesPage() {
                   <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.category}</td>
                   <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.duration}</td>
                   <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">{course.level}</td>
+                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-500">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${course.top_choice ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                      {course.top_choice ? 'Yes' : 'No'}
+                    </span>
+                  </td>
                   <td className="border border-gray-200 px-4 py-3">
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleToggleTopChoice(course.id)}
+                        className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium ${course.top_choice ? 'bg-orange-50 text-orange-700 hover:bg-orange-100' : 'bg-green-50 text-green-700 hover:bg-green-100'}`}
+                      >
+                        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        {course.top_choice ? 'Remove Top' : 'Make Top'}
+                      </button>
                       <Link
                         href={`/courses/${course.id}`}
                         className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
@@ -205,7 +242,7 @@ export default function CoursesPage() {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
+                <td colSpan={7} className="border border-gray-200 px-4 py-12 text-center text-gray-400">
                   No courses found.
                 </td>
               </tr>
