@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import * as XLSX from 'xlsx';
 
 // Type definition for the lead data
 interface Lead {
@@ -235,6 +236,43 @@ export default function AdmissionLeadsPage() {
       (courseFilter === "" || lead.interested_course === courseFilter)
   );
 
+  const handleExportToExcel = () => {
+    const exportData = filteredLeads.map(lead => ({
+      'First Name': lead.first_name,
+      'Last Name': lead.last_name,
+      'Email': lead.email,
+      'Mobile Number': lead.mobile_number,
+      'Location': lead.place,
+      'Interested Course': lead.interested_course,
+      'Course Mode': lead.course_mode,
+      'Selected Center': lead.select_center,
+      'Additional Message': lead.additional_message || '',
+      'Submitted At': new Date(lead.created_at).toLocaleDateString()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Set column widths for better readability
+    worksheet['!cols'] = [
+      { wch: 15 }, // First Name
+      { wch: 15 }, // Last Name
+      { wch: 30 }, // Email
+      { wch: 15 }, // Mobile Number
+      { wch: 20 }, // Location
+      { wch: 40 }, // Interested Course
+      { wch: 15 }, // Course Mode
+      { wch: 20 }, // Selected Center
+      { wch: 50 }, // Additional Message
+      { wch: 15 }  // Submitted At
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Admission Leads');
+
+    const fileName = `admission_leads_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+  };
+
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
@@ -294,6 +332,15 @@ export default function AdmissionLeadsPage() {
               </option>
             ))}
           </select>
+          <button
+            onClick={handleExportToExcel}
+            className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export to Excel
+          </button>
         </div>
       </div>
 
