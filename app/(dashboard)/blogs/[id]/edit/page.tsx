@@ -39,7 +39,11 @@ export default function EditBlogPage() {
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${params.id}/`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/${params.id}/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("authToken")}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setBlog(data);
@@ -85,7 +89,7 @@ export default function EditBlogPage() {
         data.append("image", formData.image);
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${params.id}/update/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/${params.id}/update/`, {
         method: "PUT",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,

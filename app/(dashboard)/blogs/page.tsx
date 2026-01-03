@@ -26,7 +26,11 @@ export default function BlogsPage() {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("authToken")}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setBlogs(data);
@@ -42,7 +46,7 @@ export default function BlogsPage() {
     if (!confirm("Are you sure you want to delete this blog?")) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/delete/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/${id}/delete/`, {
         method: "DELETE",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,

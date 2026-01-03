@@ -40,7 +40,7 @@ export default function AddBlogPage() {
         data.append("image", formData.image);
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/create/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/create/`, {
         method: "POST",
         headers: {
           Authorization: `Token ${localStorage.getItem("authToken")}`,
