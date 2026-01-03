@@ -27,3 +27,7 @@ body {
     background-attachment: fixed;
   }
 }
+
+.ck-editor__editable {
+  min-height: 400px;
+}

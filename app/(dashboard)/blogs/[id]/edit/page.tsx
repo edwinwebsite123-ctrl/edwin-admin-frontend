@@ -4,6 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 
 interface Blog {
   id: number;
@@ -205,16 +208,43 @@ export default function EditBlogPage() {
 
           <div className="sm:col-span-2">
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
-            <textarea
-              id="content"
-              name="content"
-              required
-              rows={6}
-              value={formData.content}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500"
-              placeholder="Blog content"
+
+
+            <CKEditor
+              editor={ClassicEditor as any}
+              data={formData.content}
+              config={{
+
+                toolbar: [
+                  'heading',
+                  '|',
+                  'bold',
+                  'italic',
+                  'underline',
+                  'link',
+                  'bulletedList',
+                  'numberedList',
+                  '|',
+                  'blockQuote',
+                  'insertTable',
+                  'undo',
+                  'redo',
+                  // 'Image',
+                  // 'ImageUpload',
+                  // 'ImageToolbar',
+                  // 'ImageCaption',
+                  'MediaEmbed',
+                ],
+              }}
+              onChange={(event, editor) => {
+                setFormData(prev => ({
+                  ...prev,
+                  content: editor.getData(),
+                }));
+              }}
             />
+
+
           </div>
 
           <div className="sm:col-span-2">
