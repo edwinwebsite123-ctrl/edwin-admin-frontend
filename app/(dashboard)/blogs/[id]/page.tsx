@@ -104,7 +104,7 @@ export default function ViewBlogPage() {
           <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">{blog.title}</h2>
             <div className="prose prose-sm max-w-none">
-              <p className="whitespace-pre-wrap">{blog.content}</p>
+              <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             </div>
           </div>
         </div>
