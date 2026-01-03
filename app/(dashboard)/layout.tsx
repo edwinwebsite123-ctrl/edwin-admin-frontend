@@ -270,7 +270,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[260px_1fr] grid-rows-[auto_1fr] lg:h-screen lg:overflow-hidden">
       {/* Desktop Sidebar */}
-      <aside className="row-span-2 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-r border-black/5 hidden lg:block relative min-h-screen flex flex-col">
+      <aside className="row-span-2 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-r border-black/5 hidden lg:block relative min-h-screen flex-col">
         <div className="h-16 flex items-center gap-3 px-5 border-b border-black/5">
           <Image src="/logo/hero-icon.png" alt="Company logo" width={32} height={32} />
           <span className="font-semibold tracking-wide">Dashboard</span>

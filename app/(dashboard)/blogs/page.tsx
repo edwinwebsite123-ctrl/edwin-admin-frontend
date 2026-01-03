@@ -140,9 +140,10 @@ export default function BlogsPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-                          <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+                          <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.5 9h7M8.5 12h7M8.5 15h4" />
                           </svg>
                         </div>
                       )}
