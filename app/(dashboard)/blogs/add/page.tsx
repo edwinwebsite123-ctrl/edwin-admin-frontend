@@ -3,8 +3,55 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import dynamic from "next/dynamic";
+
+
+/**
+ * CKEditor + ClassicEditor loaded together
+ * SSR disabled (REQUIRED)
+ */
+const BlogEditor = dynamic(
+  async () => {
+    const [{ CKEditor }, ClassicEditor] = await Promise.all([
+      import("@ckeditor/ckeditor5-react"),
+      import("@ckeditor/ckeditor5-build-classic"),
+    ]);
+
+    return function EditorWrapper(props: {
+      value: string;
+      onChange: (value: string) => void;
+    }) {
+      return (
+        <CKEditor
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          editor={ClassicEditor.default as any}
+          data={props.value}
+          config={{
+            toolbar: [
+              "heading",
+              "|",
+              "bold",
+              "italic",
+              "underline",
+              "link",
+              "bulletedList",
+              "numberedList",
+              "|",
+              "blockQuote",
+              "undo",
+              "redo",
+              // "MediaEmbed",
+            ],
+          }}
+          onChange={(_, editor) => {
+            props.onChange(editor.getData());
+          }}
+        />
+      );
+    };
+  },
+  { ssr: false }
+);
 
 export default function AddBlogPage() {
   const router = useRouter();
@@ -124,39 +171,12 @@ export default function AddBlogPage() {
 
           <div className="sm:col-span-2">
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
-            <CKEditor
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              editor={ClassicEditor as any}
-              data={formData.content}
-              config={{
-
-                toolbar: [
-                  'heading',
-                  '|',
-                  'bold',
-                  'italic',
-                  'underline',
-                  'link',
-                  'bulletedList',
-                  'numberedList',
-                  '|',
-                  'blockQuote',
-                  'insertTable',
-                  'undo',
-                  'redo',
-                  // 'Image',
-                  // 'ImageUpload',
-                  // 'ImageToolbar',
-                  // 'ImageCaption',
-                  'MediaEmbed',
-                ],
-              }}
-              onChange={(event, editor) => {
-                setFormData(prev => ({
-                  ...prev,
-                  content: editor.getData(),
-                }));
-              }}
+            {/* CKEditor */}
+            <BlogEditor
+              value={formData.content}
+              onChange={(value) =>
+                setFormData(prev => ({ ...prev, content: value }))
+              }
             />
           </div>
 
