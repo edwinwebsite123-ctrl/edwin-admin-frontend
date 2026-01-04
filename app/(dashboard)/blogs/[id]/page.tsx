@@ -62,7 +62,7 @@ export default function ViewBlogPage() {
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-gray-900">Blog not found</h2>
-          <p className="text-gray-500">The blog you're looking for doesn't exist.</p>
+          <p className="text-gray-500">The blog you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/blogs" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700">
             Back to Blogs
           </Link>
