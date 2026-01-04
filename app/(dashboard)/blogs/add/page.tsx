@@ -125,6 +125,7 @@ export default function AddBlogPage() {
           <div className="sm:col-span-2">
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
             <CKEditor
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
               editor={ClassicEditor as any}
               data={formData.content}
               config={{

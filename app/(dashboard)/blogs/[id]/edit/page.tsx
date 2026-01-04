@@ -211,6 +211,7 @@ export default function EditBlogPage() {
 
 
             <CKEditor
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
               editor={ClassicEditor as any}
               data={formData.content}
               config={{
