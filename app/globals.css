@@ -118,3 +118,26 @@ body {
   font-style: normal;
   color: #6b7280;
 }
+
+/* Links inside CKEditor content */
+.prose a {
+  color: #4f46e5; /* indigo-600 */
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  color: #4338ca; /* indigo-700 */
+  text-decoration-thickness: 2px;
+}
+
+.prose figure.media {
+  margin: 1.5rem 0;
+}
+
+.prose figure.media iframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+}
