@@ -41,8 +41,11 @@ const BlogEditor = dynamic(
               "blockQuote",
               "undo",
               "redo",
-              // "MediaEmbed",
+              "MediaEmbed",
             ],
+            mediaEmbed: {
+              previewsInData: true,
+            },
           }}
           onChange={(_, editor) => {
             props.onChange(editor.getData());

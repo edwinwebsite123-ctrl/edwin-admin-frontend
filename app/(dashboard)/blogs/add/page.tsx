@@ -40,7 +40,7 @@ const BlogEditor = dynamic(
               "blockQuote",
               "undo",
               "redo",
-              // "MediaEmbed",
+              "MediaEmbed",
             ],
           }}
           onChange={(_, editor) => {
