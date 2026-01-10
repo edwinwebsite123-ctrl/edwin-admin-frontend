@@ -51,6 +51,7 @@ const BlogEditor = dynamic(async () => {
               `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/editor/upload/`,
           },
         }}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(_, editor: any) => {
           onChange(editor.getData());
         }}
