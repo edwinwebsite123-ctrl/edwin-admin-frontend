@@ -10,48 +10,53 @@ import dynamic from "next/dynamic";
  * CKEditor + ClassicEditor loaded together
  * SSR disabled (REQUIRED)
  */
-const BlogEditor = dynamic(
-  async () => {
-    const [{ CKEditor }, ClassicEditor] = await Promise.all([
-      import("@ckeditor/ckeditor5-react"),
-      import("@ckeditor/ckeditor5-build-classic"),
-    ]);
+const BlogEditor = dynamic(async () => {
+  const [{ CKEditor }, ClassicEditor] = await Promise.all([
+    import("@ckeditor/ckeditor5-react"),
+    import("@ckeditor/ckeditor5-build-classic"),
+  ]);
 
-    return function EditorWrapper(props: {
-      value: string;
-      onChange: (value: string) => void;
-    }) {
-      return (
-        <CKEditor
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          editor={ClassicEditor.default as any}
-          data={props.value}
-          config={{
-            toolbar: [
-              "heading",
-              "|",
-              "bold",
-              "italic",
-              "underline",
-              "link",
-              "bulletedList",
-              "numberedList",
-              "|",
-              "blockQuote",
-              "undo",
-              "redo",
-              "MediaEmbed",
-            ],
-          }}
-          onChange={(_, editor) => {
-            props.onChange(editor.getData());
-          }}
-        />
-      );
-    };
-  },
-  { ssr: false }
-);
+  return function EditorWrapper({
+    value,
+    onChange,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+  }) {
+    return (
+      <CKEditor
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        editor={ClassicEditor.default as any}
+        data={value}
+        config={{
+          toolbar: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "imageUpload",
+            "blockQuote",
+            "undo",
+            "redo",
+            "mediaEmbed",
+          ],
+          ckfinder: {
+            uploadUrl:
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/blogs/editor/upload/`,
+          },
+        }}
+        onChange={(_, editor: any) => {
+          onChange(editor.getData());
+        }}
+      />
+    );
+  };
+}, { ssr: false });
 
 export default function AddBlogPage() {
   const router = useRouter();
